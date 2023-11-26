@@ -4,13 +4,13 @@ A starting point for building ASP.NET Core Web APIs with minimal APIs and Native
 
 ### Features
 
-[x] Minimal APIs
-[x] DB access via Npgsql
-[x] Observability via OpenTelemetry
-[x] Simple Todo domain as example
-[x] Source Generator for wiring up endpoint classes
-[ ] Full-fledged authentication and user management
-[ ] Useful Grafana dashboards
+- [x] Minimal APIs
+- [x] DB access via Npgsql
+- [x] Observability via OpenTelemetry
+- [x] Simple Todo domain as example
+- [x] Source Generator for wiring up endpoint classes
+- [ ] Full-fledged authentication and user management
+- [ ] Useful Grafana dashboards
 
 ### TODO
 
