@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotnetAotApi.Api", "DotnetAotApi.Api\DotnetAotApi.Api.csproj", "{D6455B31-E1A7-4B7A-9BFC-DEA8CE48F7BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotnetAotApi.Api.Generators", "DotnetAotApi.Api.Generators\DotnetAotApi.Api.Generators.csproj", "{C3D2142C-2AE7-4571-A742-BB627746BB53}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D6455B31-E1A7-4B7A-9BFC-DEA8CE48F7BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6455B31-E1A7-4B7A-9BFC-DEA8CE48F7BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6455B31-E1A7-4B7A-9BFC-DEA8CE48F7BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6455B31-E1A7-4B7A-9BFC-DEA8CE48F7BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3D2142C-2AE7-4571-A742-BB627746BB53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3D2142C-2AE7-4571-A742-BB627746BB53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3D2142C-2AE7-4571-A742-BB627746BB53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3D2142C-2AE7-4571-A742-BB627746BB53}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

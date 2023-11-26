@@ -1,0 +1,45 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+      grpc:
+
+processors:
+  batch:
+  attributes:
+    actions:
+      - action: insert
+        key: loki.attribute.labels
+        value: log.file.name
+
+exporters:
+  otlp/tempo:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+  prometheusremotewrite:
+    endpoint: http://prometheus:9090/api/v1/write
+    tls:
+      insecure: true
+
+extensions:
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+service:
+  telemetry:
+    logs:
+      level: "debug"
+  extensions: [zpages]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [otlp/tempo]
+    metrics:
+      receivers: [otlp]
+      exporters: [prometheusremotewrite]
+    logs:
+      receivers: [otlp]
+      exporters: [loki]
