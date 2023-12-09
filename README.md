@@ -1,6 +1,7 @@
 # Dotnet AOT API Template
 
 [![build](https://github.com/ryanseipp/dotnet-aot-api/actions/workflows/build.yml/badge.svg)](https://github.com/ryanseipp/dotnet-aot-api/actions/workflows/build.yml)
+[![CodeQL](https://github.com/ryanseipp/dotnet-aot-api/actions/workflows/codeql.yml/badge.svg)](https://github.com/ryanseipp/dotnet-aot-api/actions/workflows/codeql.yml)
 
 A starting point for building ASP.NET Core Web APIs with minimal APIs and Native AOT compilation.
 
