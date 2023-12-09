@@ -30,14 +30,14 @@ public sealed class UserService : IUserService
         return await GetUser(identity.Name, ct);
     }
 
-    public async Task<User?> GetUser(string email, CancellationToken ct = default)
+    public async Task<User?> GetUser(string username, CancellationToken ct = default)
     {
         return await _cache.GetOrCreateAsync(
-            GetCacheKey(email),
+            GetCacheKey(username),
             async (entry) =>
             {
                 var email = (entry.Key as string)!.Split(':').Last();
-                var user = await _userRepository.GetUserByEmail(email, null, ct);
+                var user = await _userRepository.GetUserByUsername(username, null, ct);
 
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
 
@@ -46,5 +46,5 @@ public sealed class UserService : IUserService
         );
     }
 
-    private string GetCacheKey(string email) => $"DotnetAotApi.User:{email}";
+    private string GetCacheKey(string username) => $"DotnetAotApi.User:{username}";
 }
