@@ -1,7 +1,8 @@
-using DotnetAotApi.Api.Features;
 using Npgsql;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
+using OpenTelemetry.ResourceDetectors.Container;
+using OpenTelemetry.ResourceDetectors.ProcessRuntime;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -18,7 +19,15 @@ public static class OpenTelemetryExtensions
 
         services
             .AddOpenTelemetry()
-            .ConfigureResource(builder => builder.AddService(OtelConfig.ServiceName))
+            .ConfigureResource(
+                builder =>
+                    builder
+                        .AddEnvironmentVariableDetector()
+                        .AddService(OtelConfig.ServiceName)
+                        .AddTelemetrySdk()
+                        .AddDetector(new ContainerResourceDetector())
+                        .AddDetector(new ProcessRuntimeDetector())
+            )
             .WithMetrics(builder =>
             {
                 builder
@@ -26,6 +35,7 @@ public static class OpenTelemetryExtensions
                     .AddHttpClientInstrumentation()
                     .AddOtlpExporter(otlp =>
                     {
+                        otlp.ExportProcessorType = OpenTelemetry.ExportProcessorType.Batch;
                         otlp.Endpoint = new Uri("http://localhost:4317");
                         otlp.Protocol = OtlpExportProtocol.Grpc;
                     });
@@ -38,6 +48,7 @@ public static class OpenTelemetryExtensions
                         .AddNpgsql()
                         .AddOtlpExporter(otlp =>
                         {
+                            otlp.ExportProcessorType = OpenTelemetry.ExportProcessorType.Batch;
                             otlp.Endpoint = new Uri("http://localhost:4317");
                             otlp.Protocol = OtlpExportProtocol.Grpc;
                         })

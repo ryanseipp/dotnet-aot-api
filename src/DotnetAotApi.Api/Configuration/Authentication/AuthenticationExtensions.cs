@@ -1,5 +1,6 @@
 using DotnetAotApi.Api.Features.Authentication.Services;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.CookiePolicy;
 using Polly;
 using Polly.Contrib.WaitAndRetry;
 
@@ -9,7 +10,12 @@ public static class AuthenticationExtensions
 {
     public static IServiceCollection WithAuthentication(this IServiceCollection services)
     {
-        services.AddAuthentication(IdentityConstants.ApplicationScheme).AddCookie();
+        services
+            .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.ExpireTimeSpan = TimeSpan.FromHours(72);
+            });
 
         services.AddHttpContextAccessor();
 
@@ -31,5 +37,21 @@ public static class AuthenticationExtensions
             );
 
         return services;
+    }
+
+    public static WebApplication WithAuthentication(this WebApplication builder)
+    {
+        builder.UseCookiePolicy(
+            new CookiePolicyOptions
+            {
+                MinimumSameSitePolicy = SameSiteMode.Strict,
+                Secure = CookieSecurePolicy.SameAsRequest,
+                HttpOnly = HttpOnlyPolicy.Always,
+            }
+        );
+
+        builder.UseAuthentication();
+
+        return builder;
     }
 }

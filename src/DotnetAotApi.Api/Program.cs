@@ -1,4 +1,5 @@
 using DotnetAotApi.Api.Configuration;
+using DotnetAotApi.Api.Configuration.Authentication;
 using DotnetAotApi.Api.Features;
 using DotnetAotApi.Api.Repositories;
 
@@ -14,20 +15,11 @@ builder
     .WithOpenTelemetry(builder.Environment)
     .WithHealthChecks(builder.Configuration)
     .WithDatabase(builder.Configuration)
+    .WithAuthentication()
     .WithRepositories();
 
 var app = builder.Build();
-app.MapHealthChecks("/healthz");
-app.MapGet(
-    "/hello",
-    async () =>
-    {
-        await Task.Delay(250);
-        return TypedResults.Ok("Hello, World!");
-    }
-);
-
-app.MapFeatureEndpoints();
+app.WithAuthentication().MapFeatureEndpoints();
 
 ProgramLogs.StartingApplication(app.Logger);
 
