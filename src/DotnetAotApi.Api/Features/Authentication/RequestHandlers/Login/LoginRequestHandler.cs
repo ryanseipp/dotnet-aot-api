@@ -13,7 +13,11 @@ public static class LoginRequestHandler
         CancellationToken ct
     )
     {
-        return await signInManager.PasswordSignInAsync(request.Email, request.Password, ct) switch
+        return await signInManager.PasswordSignInAsync(
+            request.Username,
+            request.Password,
+            ct
+        ) switch
         {
             // ISignInManager produces response on successful login
             SignInResult.Success

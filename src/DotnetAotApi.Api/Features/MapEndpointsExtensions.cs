@@ -6,6 +6,7 @@ public static partial class MapEndpointsExtensions
 
     public static void MapFeatureEndpoints(this IEndpointRouteBuilder builder)
     {
+        builder.MapHealthChecks("/healthz");
         MapEndpoints(builder);
     }
 }

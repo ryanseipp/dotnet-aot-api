@@ -25,12 +25,12 @@ public sealed class UserRepository : IUserRepository
     )
     {
         await using var sqlCmd = new NpgsqlCommand(
-            "SELECT 1 FROM users WHERE email = $1 LIMIT 1",
+            "SELECT 1 FROM users WHERE username = $1 LIMIT 1",
             _dbConnection,
             transaction
         )
         {
-            Parameters = { new() { Value = user.Email } }
+            Parameters = { new() { Value = user.Username } }
         };
 
         await sqlCmd.PrepareAsync(ct);
@@ -46,8 +46,8 @@ public sealed class UserRepository : IUserRepository
     {
         await using var sqlCmd = new NpgsqlCommand(
             """
-            INSERT INTO users (name, email, status, password_hash, created_at)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO users (usernamename, status, password_hash, created_at)
+            VALUES ($1, $2, $3, $4)
             RETURNING id
             """,
             _dbConnection,
@@ -56,8 +56,7 @@ public sealed class UserRepository : IUserRepository
         {
             Parameters =
             {
-                new() { Value = user.Name },
-                new() { Value = user.Email },
+                new() { Value = user.Username },
                 new() { Value = user.Status.ToString() },
                 new() { Value = user.PasswordHash },
                 new() { Value = user.CreatedAtTimestamp },
@@ -71,23 +70,23 @@ public sealed class UserRepository : IUserRepository
         return reader.GetInt64(0);
     }
 
-    public async Task<User?> GetUserByEmail(
-        string email,
+    public async Task<User?> GetUserByUsername(
+        string username,
         NpgsqlTransaction? transaction = null,
         CancellationToken ct = default
     )
     {
         await using var sqlCmd = new NpgsqlCommand(
             """
-            SELECT id, name, email, status, password_hash, created_at, updated_at, deleted_at
+            SELECT id, username, status, password_hash, created_at, updated_at, deleted_at
             FROM users
-            WHERE email = $1 LIMIT 1
+            WHERE username = $1 LIMIT 1
             """,
             _dbConnection,
             transaction
         )
         {
-            Parameters = { new() { Value = email } }
+            Parameters = { new() { Value = username } }
         };
 
         await sqlCmd.PrepareAsync(ct);
@@ -105,7 +104,7 @@ public sealed class UserRepository : IUserRepository
         await using var sqlCmd = new NpgsqlCommand(
             """
                 UPDATE users
-                SET name = $1, status = $2, password_hash = $3, created_at = $4 updated_at = $5, deleted_at = $6
+                SET username = $1, status = $2, password_hash = $3, created_at = $4 updated_at = $5, deleted_at = $6
                 WHERE id = $7
                 """,
             _dbConnection,
@@ -114,7 +113,7 @@ public sealed class UserRepository : IUserRepository
         {
             Parameters =
             {
-                new() { Value = user.Name },
+                new() { Value = user.Username },
                 new() { Value = user.Status.ToString() },
                 new() { Value = user.PasswordHash },
                 new() { Value = user.CreatedAtTimestamp },
@@ -138,14 +137,13 @@ public sealed class UserRepository : IUserRepository
         }
 
         var id = reader.GetInt64(0);
-        var name = reader.GetString(1);
-        var email = reader.GetString(2);
+        var username = reader.GetString(1);
         var status = Enum.Parse<UserStatus>(reader.GetString(3));
         var passwordHash = reader.GetString(4);
         var createdAt = reader.GetFieldValue<DateTimeOffset>(5);
         var updatedAt = reader.GetFieldValue<DateTimeOffset?>(6);
         var deletedAt = reader.GetFieldValue<DateTimeOffset?>(7);
 
-        return new User(id, name, email, status, passwordHash, createdAt, updatedAt, deletedAt);
+        return new User(id, username, status, passwordHash, createdAt, updatedAt, deletedAt);
     }
 }

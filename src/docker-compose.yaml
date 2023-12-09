@@ -1,6 +1,17 @@
 version: "3"
 
 services:
+  psql:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - psql-data:/var/lib/postgresql/data
+
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     command:
@@ -55,3 +66,4 @@ services:
 
 volumes:
   tempo-data:
+  psql-data:

@@ -2,11 +2,10 @@ namespace DotnetAotApi.Api.Domain;
 
 public sealed class User
 {
-    public User(string name, string email, string passwordHash)
+    public User(string username, string passwordHash)
     {
         Id = default;
-        Name = name;
-        Email = email;
+        Username = username;
         Status = UserStatus.Active;
         PasswordHash = passwordHash;
         CreatedAtTimestamp = DateTimeOffset.UtcNow;
@@ -14,8 +13,7 @@ public sealed class User
 
     public User(
         long id,
-        string name,
-        string email,
+        string username,
         UserStatus status,
         string passwordHash,
         DateTimeOffset createdAt,
@@ -24,8 +22,7 @@ public sealed class User
     )
     {
         Id = id;
-        Name = name;
-        Email = email;
+        Username = username;
         Status = status;
         PasswordHash = passwordHash;
         CreatedAtTimestamp = createdAt;
@@ -34,8 +31,7 @@ public sealed class User
     }
 
     public long Id { get; private set; }
-    public string Name { get; private set; }
-    public string Email { get; private set; }
+    public string Username { get; private set; }
     public UserStatus Status { get; private set; }
 
     public string PasswordHash { get; private set; }

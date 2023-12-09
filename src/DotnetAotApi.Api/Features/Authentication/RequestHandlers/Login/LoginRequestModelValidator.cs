@@ -6,8 +6,7 @@ public sealed class LoginRequestModelValidator : AbstractValidator<LoginRequestM
 {
     public LoginRequestModelValidator()
     {
-        RuleFor(p => p.Email).NotEmpty().EmailAddress();
-
-        // Do not validate password here. That's done within the request hanldler.
+        RuleFor(p => p.Username).NotEmpty().MaximumLength(256);
+        RuleFor(p => p.Password).NotEmpty().MinimumLength(16).MinimumLength(64);
     }
 }

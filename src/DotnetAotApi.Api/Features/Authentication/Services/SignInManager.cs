@@ -2,7 +2,7 @@ using System.Security.Claims;
 using DotnetAotApi.Api.Domain;
 using DotnetAotApi.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace DotnetAotApi.Api.Features.Authentication.Services;
 
@@ -29,12 +29,12 @@ public sealed class SignInManager : ISignInManager
     }
 
     public async Task<SignInResult> PasswordSignInAsync(
-        string userEmail,
+        string username,
         string password,
         CancellationToken ct = default
     )
     {
-        var user = await _userRepository.GetUserByEmail(userEmail, null, ct);
+        var user = await _userRepository.GetUserByUsername(username, null, ct);
         return await PasswordSignInAsync(user, password, ct);
     }
 
@@ -59,17 +59,19 @@ public sealed class SignInManager : ISignInManager
         }
 
         var id = new ClaimsIdentity(
-            IdentityConstants.ApplicationScheme,
-            ClaimTypes.Email,
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            ClaimTypes.NameIdentifier,
             ClaimTypes.Role
         );
 
         id.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
-        id.AddClaim(new Claim(ClaimTypes.Name, user.Name));
-        id.AddClaim(new Claim(ClaimTypes.Email, user.Email));
+        id.AddClaim(new Claim(ClaimTypes.Name, user.Username));
         var principal = new ClaimsPrincipal(id);
 
-        await _httpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
+        await _httpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            principal
+        );
         _httpContext.User = principal;
 
         return SignInResult.Success;

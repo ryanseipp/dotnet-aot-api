@@ -41,7 +41,7 @@ public static class RegisterRequestHandler
         }
 
         var hashedPassword = await passwordHasher.HashPassword(request.Password);
-        var user = new User(request.Name, request.Email, hashedPassword);
+        var user = new User(request.Username, hashedPassword);
 
         await using var transaction = await userRepository.BeginTransaction(ct);
         if (!await userRepository.IsUniqueUser(user, transaction))
@@ -51,7 +51,7 @@ public static class RegisterRequestHandler
                 new Dictionary<string, string[]>
                 {
                     {
-                        nameof(request.Email),
+                        nameof(request.Username),
                         new string[] { "Email cannot be used to register a new user" }
                     }
                 }
