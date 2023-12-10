@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Register a new account">
+  <main class="max-w-sm h-screen mx-auto flex flex-col justify-center items-center">
+    <div class="w-full bg-slate-100 dark:bg-slate-900 p-4 rounded-lg shadow-black shadow flex flex-col justify-center items-center">
+      <h1 class="text-2xl mb-8">Register a new account.</h1>
+      <form class="flex flex-col w-full" action="/v1.0/auth/register" method="post">
+        <label for="username" class="block">Username<span class="text-red-600">*</span></label>
+        <input type="text" id="username" name="username" required minlength="1" maxlength="256" class="mb-4 rounded p-1 dark:bg-slate-950 border border-slate-800" />
+        <label for="password" class="block">Password<span class="text-red-600">*</span></label>
+        <input type="password" id="password" name="password" required minlength="16" maxlength="64" class="mb-4 rounded p-1 dark:bg-slate-950 border border-slate-800" />
+        <button type="submit" class="shadow shadow-slate-950 p-2 bg-slate-200 dark:bg-slate-700 rounded font-bold">Register</button>
+      </form>
+    </div>
+  </main>
+</Layout>

@@ -20,7 +20,7 @@ public static class ApplicationExtensions
     }
 }
 
-public class ApplicationConnectionStrings
+public sealed class ApplicationConnectionStrings
 {
     public const string ConnectionStrings = "ConnectionStrings";
 

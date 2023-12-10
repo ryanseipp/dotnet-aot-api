@@ -7,6 +7,9 @@ public static class DatabaseExtensions
         IConfiguration configuration
     )
     {
+        Console.WriteLine(
+            $"Connection string: {configuration.GetRequiredSection("ConnectionStrings")["Postgres"]!}"
+        );
         services.AddNpgsqlSlimDataSource(
             configuration.GetRequiredSection("ConnectionStrings")["Postgres"]!
         );

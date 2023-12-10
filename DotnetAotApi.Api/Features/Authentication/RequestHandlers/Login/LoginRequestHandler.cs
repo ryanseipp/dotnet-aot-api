@@ -9,10 +9,12 @@ public static class LoginRequestHandler
 {
     public static async Task<Results<EmptyHttpResult, UnauthorizedHttpResult, NotFound>> Handle(
         [FromServices] ISignInManager signInManager,
-        [FromBody] LoginRequestModel request,
+        [FromForm] string username,
+        [FromForm] string password,
         CancellationToken ct
     )
     {
+        var request = new LoginRequestModel(username, password);
         return await signInManager.PasswordSignInAsync(
             request.Username,
             request.Password,

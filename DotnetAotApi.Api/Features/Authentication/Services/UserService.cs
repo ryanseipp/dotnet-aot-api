@@ -7,10 +7,10 @@ namespace DotnetAotApi.Api.Features.Authentication.Services;
 
 public sealed class UserService : IUserService
 {
-    private readonly MemoryCache _cache;
+    private readonly IMemoryCache _cache;
     private readonly IUserRepository _userRepository;
 
-    public UserService(MemoryCache cache, IUserRepository userRepository)
+    public UserService(IMemoryCache cache, IUserRepository userRepository)
     {
         _cache = cache;
         _userRepository = userRepository;

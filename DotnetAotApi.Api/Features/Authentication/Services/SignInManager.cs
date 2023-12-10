@@ -15,7 +15,7 @@ public sealed class SignInManager : ISignInManager
     public SignInManager(
         IUserRepository userRepository,
         IPasswordHasher passwordHasher,
-        HttpContextAccessor httpContext
+        IHttpContextAccessor httpContext
     )
     {
         _userRepository = userRepository;

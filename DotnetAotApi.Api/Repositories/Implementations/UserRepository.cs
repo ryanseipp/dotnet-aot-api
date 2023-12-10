@@ -1,3 +1,4 @@
+using System.Data;
 using DotnetAotApi.Api.Domain;
 using DotnetAotApi.Api.Repositories.Interfaces;
 using Npgsql;
@@ -15,6 +16,7 @@ public sealed class UserRepository : IUserRepository
 
     public async Task<NpgsqlTransaction> BeginTransaction(CancellationToken ct = default)
     {
+        await EnsureConnectionOpen(ct);
         return await _dbConnection.BeginTransactionAsync(ct);
     }
 
@@ -24,8 +26,9 @@ public sealed class UserRepository : IUserRepository
         CancellationToken ct = default
     )
     {
+        await EnsureConnectionOpen(ct);
         await using var sqlCmd = new NpgsqlCommand(
-            "SELECT 1 FROM users WHERE username = $1 LIMIT 1",
+            "SELECT 1 FROM dotnet_aot_api.users WHERE username = $1 LIMIT 1",
             _dbConnection,
             transaction
         )
@@ -44,9 +47,10 @@ public sealed class UserRepository : IUserRepository
         CancellationToken ct = default
     )
     {
+        await EnsureConnectionOpen(ct);
         await using var sqlCmd = new NpgsqlCommand(
             """
-            INSERT INTO users (usernamename, status, password_hash, created_at)
+            INSERT INTO dotnet_aot_api.users (username, status, password_hash, created_at)
             VALUES ($1, $2, $3, $4)
             RETURNING id
             """,
@@ -76,10 +80,11 @@ public sealed class UserRepository : IUserRepository
         CancellationToken ct = default
     )
     {
+        await EnsureConnectionOpen(ct);
         await using var sqlCmd = new NpgsqlCommand(
             """
             SELECT id, username, status, password_hash, created_at, updated_at, deleted_at
-            FROM users
+            FROM dotnet_aot_api.users
             WHERE username = $1 LIMIT 1
             """,
             _dbConnection,
@@ -101,9 +106,10 @@ public sealed class UserRepository : IUserRepository
         CancellationToken ct = default
     )
     {
+        await EnsureConnectionOpen(ct);
         await using var sqlCmd = new NpgsqlCommand(
             """
-                UPDATE users
+                UPDATE dotnet_aot_api.users
                 SET username = $1, status = $2, password_hash = $3, created_at = $4 updated_at = $5, deleted_at = $6
                 WHERE id = $7
                 """,
@@ -128,6 +134,14 @@ public sealed class UserRepository : IUserRepository
         return rowsUpdated == 1;
     }
 
+    private async ValueTask EnsureConnectionOpen(CancellationToken ct = default)
+    {
+        if (_dbConnection.State != ConnectionState.Open)
+        {
+            await _dbConnection.OpenAsync(ct);
+        }
+    }
+
     private async Task<User?> GetUserFromReader(NpgsqlDataReader reader)
     {
         var hasResult = await reader.ReadAsync();
@@ -138,11 +152,11 @@ public sealed class UserRepository : IUserRepository
 
         var id = reader.GetInt64(0);
         var username = reader.GetString(1);
-        var status = Enum.Parse<UserStatus>(reader.GetString(3));
-        var passwordHash = reader.GetString(4);
-        var createdAt = reader.GetFieldValue<DateTimeOffset>(5);
-        var updatedAt = reader.GetFieldValue<DateTimeOffset?>(6);
-        var deletedAt = reader.GetFieldValue<DateTimeOffset?>(7);
+        var status = Enum.Parse<UserStatus>(reader.GetString(2));
+        var passwordHash = reader.GetString(3);
+        var createdAt = reader.GetFieldValue<DateTimeOffset>(4);
+        var updatedAt = reader.GetFieldValue<DateTimeOffset?>(5);
+        var deletedAt = reader.GetFieldValue<DateTimeOffset?>(6);
 
         return new User(id, username, status, passwordHash, createdAt, updatedAt, deletedAt);
     }

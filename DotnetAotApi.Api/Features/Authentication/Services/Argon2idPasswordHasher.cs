@@ -48,6 +48,7 @@ public sealed class Argon2idPasswordHasher : IPasswordHasher
 
             var config = new Argon2Config();
             var decoded = config.DecodeString(expectedHash, out decodedHash);
+            config.Password = Encoding.UTF8.GetBytes(password);
 
             if (!decoded || decodedHash == null)
             {

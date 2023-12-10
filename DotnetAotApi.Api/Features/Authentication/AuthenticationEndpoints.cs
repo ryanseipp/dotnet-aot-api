@@ -12,10 +12,12 @@ public sealed class AuthenticationEndpoints : IEndpoint
 
         authV1Routes
             .MapPost("/register", RegisterRequestHandler.Handle)
+            .DisableAntiforgery()
             .WithName(AuthenticationRouteNames.RegisterUser);
 
         authV1Routes
             .MapPost("/login", LoginRequestHandler.Handle)
+            .DisableAntiforgery()
             .WithName(AuthenticationRouteNames.LoginUser);
     }
 }

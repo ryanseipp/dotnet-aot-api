@@ -15,6 +15,7 @@
     <PackageReference Include="FluentValidation" Version="11.8.1" />
     <PackageReference Include="Isopoh.Cryptography.Argon2" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.0.0" />
     <PackageReference Include="Npgsql" Version="8.0.1" />
     <PackageReference Include="Npgsql.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="Npgsql.OpenTelemetry" Version="8.0.1" />

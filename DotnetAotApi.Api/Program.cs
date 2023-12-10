@@ -9,8 +9,11 @@ builder.Logging.WithLoggingConfiguration(builder.Environment);
 
 builder
     .Services
+    .AddResponseCompression()
+    .AddAntiforgery()
     .AddProblemDetails()
     .WithApplicationOptions()
+    .WithValidation()
     .WithJsonConfiguration()
     .WithOpenTelemetry(builder.Environment)
     .WithHealthChecks(builder.Configuration)
@@ -19,7 +22,13 @@ builder
     .WithRepositories();
 
 var app = builder.Build();
-app.WithAuthentication().MapFeatureEndpoints();
+app.UseResponseCaching()
+    .UseDefaultFiles(new DefaultFilesOptions { RedirectToAppendTrailingSlash = false })
+    .UseStaticFiles(new StaticFileOptions { RedirectToAppendTrailingSlash = false });
+
+app.WithAuthentication();
+app.UseAntiforgery();
+app.MapFeatureEndpoints();
 
 ProgramLogs.StartingApplication(app.Logger);
 

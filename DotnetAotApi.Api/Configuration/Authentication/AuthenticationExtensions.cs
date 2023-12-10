@@ -1,8 +1,7 @@
+using System.Net;
 using DotnetAotApi.Api.Features.Authentication.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.CookiePolicy;
-using Polly;
-using Polly.Contrib.WaitAndRetry;
 
 namespace DotnetAotApi.Api.Configuration.Authentication;
 
@@ -18,23 +17,18 @@ public static class AuthenticationExtensions
             });
 
         services.AddHttpContextAccessor();
+        services.AddMemoryCache();
 
         services.AddScoped<IPasswordHasher, Argon2idPasswordHasher>();
         services.AddScoped<ISignInManager, SignInManager>();
         services.AddScoped<IUserService, UserService>();
 
         services
-            .AddHttpClient<HaveIBeenPwnedClient>(httpClient =>
+            .AddHttpClient<HaveIBeenPwnedClient>(static httpClient =>
             {
-                httpClient.BaseAddress = new Uri("https://api.pwnedpasswords.com/");
-                httpClient.Timeout = TimeSpan.FromSeconds(1);
+                httpClient.BaseAddress = new("https://api.pwnedpasswords.com/");
             })
-            .AddTransientHttpErrorPolicy(
-                policy =>
-                    policy.WaitAndRetryAsync(
-                        Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromMilliseconds(500), 5)
-                    )
-            );
+            .AddStandardResilienceHandler();
 
         return services;
     }
