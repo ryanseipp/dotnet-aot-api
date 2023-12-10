@@ -20,3 +20,8 @@ A starting point for building ASP.NET Core Web APIs with minimal APIs and Native
 - User authentication and management is still WIP. Ideally support for email confirmation and 2FA will be added.
 - Complete Todo domain and request handlers.
 - Build useful Grafana dashboards for determining key performance metrics of the API.
+
+### Observability
+
+![Preview of the configured Grafana dashboard with metrics from the running
+API](/olly/dashboard-preview.png)
