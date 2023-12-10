@@ -24,4 +24,4 @@ A starting point for building ASP.NET Core Web APIs with minimal APIs and Native
 ### Observability
 
 ![Preview of the configured Grafana dashboard with metrics from the running
-API](/olly/dashboard-preview.png)
+API](/o11y/dashboard-preview.png)
