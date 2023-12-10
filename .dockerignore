@@ -1,0 +1,11 @@
+.git/
+.github/
+o11y/
+README.md
+**/node_modules
+**/.vscode
+**/README.md
+**/bin/
+**/obj/
+**/Dockerfile
+**/wwwroot

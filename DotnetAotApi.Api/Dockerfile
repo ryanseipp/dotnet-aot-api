@@ -7,12 +7,29 @@ RUN apk add --upgrade --no-cache \
     clang \
     zlib-dev
 
-COPY DotnetAotApi.Api.csproj .
-RUN dotnet restore -r linux-musl-${TARGETARCH}
+COPY DotnetAotApi.sln .
+COPY DotnetAotApi.Api/DotnetAotApi.Api.csproj DotnetAotApi.Api/
+COPY DotnetAotApi.Api.Generators/DotnetAotApi.Api.Generators.csproj DotnetAotApi.Api.Generators/
+RUN dotnet restore -r linux-musl-${TARGETARCH} --locked-mode
 
-COPY . .
-RUN dotnet publish --no-restore -a ${TARGETARCH} -o /app
-# RUN rm /app/*.dbg /app/*.Development.json
+COPY DotnetAotApi.Api DotnetAotApi.Api/
+COPY DotnetAotApi.Api.Generators DotnetAotApi.Api.Generators/
+RUN dotnet publish DotnetAotApi.Api -a ${TARGETARCH} -o /app
+RUN rm /app/*.dbg /app/*.pdb /app/appsettings.Development.json
+
+FROM node:lts-alpine3.18 as build-web
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+WORKDIR /source
+
+COPY DotnetAotApi.Web/package.json .
+COPY DotnetAotApi.Web/pnpm-lock.yaml .
+
+RUN pnpm i --frozen-lockfile
+
+COPY DotnetAotApi.Web .
+RUN pnpm run build
 
 FROM alpine:3.18 as run
 
@@ -40,5 +57,6 @@ RUN addgroup \
 
 WORKDIR /app
 COPY --from=build /app .
+COPY --from=build-web /source/dist/ /app/wwwroot/
 USER $APP_UID
 ENTRYPOINT [ "./DotnetAotApi.Api" ]
