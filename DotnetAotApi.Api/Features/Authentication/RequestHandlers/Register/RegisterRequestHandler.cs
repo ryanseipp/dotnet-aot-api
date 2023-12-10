@@ -2,7 +2,6 @@ using DotnetAotApi.Api.Domain;
 using DotnetAotApi.Api.Features.Authentication.Services;
 using DotnetAotApi.Api.Repositories.Interfaces;
 using FluentValidation;
-// using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,17 +9,15 @@ namespace DotnetAotApi.Api.Features.Authentication.RequestHandlers.Register;
 
 public static class RegisterRequestHandler
 {
-    public static async Task<Results<RedirectHttpResult, BadRequest, ValidationProblem>> Handle(
+    public static async Task<Results<Created<long>, ValidationProblem>> Handle(
         [FromServices] IValidator<RegisterRequestModel> validator,
         [FromServices] HaveIBeenPwnedClient haveIBeenPwned,
         [FromServices] IUserRepository userRepository,
         [FromServices] IPasswordHasher passwordHasher,
-        [FromForm] string username,
-        [FromForm] string password,
+        [FromBody] RegisterRequestModel request,
         CancellationToken ct
     )
     {
-        var request = new RegisterRequestModel(username, password);
         var validationResult = validator.Validate(request);
         if (!validationResult.IsValid)
         {
@@ -36,7 +33,7 @@ public static class RegisterRequestHandler
                         nameof(request.Password),
                         new string[]
                         {
-                            "Password has appeared in data breaches. Please use another"
+                            "Password has appeared in data breaches. Please use another password."
                         }
                     }
                 }
@@ -53,18 +50,15 @@ public static class RegisterRequestHandler
             return TypedResults.ValidationProblem(
                 new Dictionary<string, string[]>
                 {
-                    {
-                        nameof(request.Username),
-                        new string[] { "Email cannot be used to register a new user" }
-                    }
+                    { nameof(request.Username), new string[] { "Please choose another username." } }
                 }
             );
         }
 
-        await userRepository.CreateUser(user, transaction, ct);
+        var id = await userRepository.CreateUser(user, transaction, ct);
         await transaction.CommitAsync();
         OtelConfig.RegisteredUsers.Add(1);
 
-        return TypedResults.Redirect("/v1.0/auth/login");
+        return TypedResults.Created<long>("/v1.0/auth/current", id);
     }
 }

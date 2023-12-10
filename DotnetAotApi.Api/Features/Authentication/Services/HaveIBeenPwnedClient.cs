@@ -56,6 +56,6 @@ public sealed class HaveIBeenPwnedClient
     {
         var utf8Password = Encoding.UTF8.GetBytes(password);
         using var sha1Hasher = SHA1.Create();
-        return Convert.ToBase64String(sha1Hasher.ComputeHash(utf8Password));
+        return Convert.ToHexString(sha1Hasher.ComputeHash(utf8Password));
     }
 }
