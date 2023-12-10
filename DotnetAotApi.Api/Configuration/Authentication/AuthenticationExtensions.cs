@@ -1,7 +1,8 @@
-using System.Net;
 using DotnetAotApi.Api.Features.Authentication.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.CookiePolicy;
+using Polly;
+using Polly.Contrib.WaitAndRetry;
 
 namespace DotnetAotApi.Api.Configuration.Authentication;
 
@@ -28,7 +29,12 @@ public static class AuthenticationExtensions
             {
                 httpClient.BaseAddress = new("https://api.pwnedpasswords.com/");
             })
-            .AddStandardResilienceHandler();
+            .AddTransientHttpErrorPolicy(
+                policy =>
+                    policy.WaitAndRetryAsync(
+                        Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromMilliseconds(500), 5)
+                    )
+            );
 
         return services;
     }
