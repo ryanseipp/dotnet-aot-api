@@ -5,7 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace DotnetAotApi.Api.Features.Authentication.Services;
 
-public sealed class UserService : IUserService
+public sealed partial class UserService : IUserService
 {
     private readonly IMemoryCache _cache;
     private readonly IUserRepository _userRepository;
@@ -27,17 +27,17 @@ public sealed class UserService : IUserService
             return null;
         }
 
-        return await GetUser(identity.Name, ct);
+        return await GetUser(long.Parse(identity.Name), ct);
     }
 
-    public async Task<User?> GetUser(string username, CancellationToken ct = default)
+    public async Task<User?> GetUser(long id, CancellationToken ct = default)
     {
         return await _cache.GetOrCreateAsync(
-            GetCacheKey(username),
+            GetCacheKey(id),
             async (entry) =>
             {
                 var email = (entry.Key as string)!.Split(':').Last();
-                var user = await _userRepository.GetUserByUsername(username, null, ct);
+                var user = await _userRepository.GetUserById(id, null, ct);
 
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
 
@@ -46,5 +46,5 @@ public sealed class UserService : IUserService
         );
     }
 
-    private string GetCacheKey(string username) => $"DotnetAotApi.User:{username}";
+    private string GetCacheKey(long id) => $"DotnetAotApi.User:{id}";
 }

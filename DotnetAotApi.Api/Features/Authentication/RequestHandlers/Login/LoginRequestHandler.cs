@@ -7,7 +7,7 @@ namespace DotnetAotApi.Api.Features.Authentication.RequestHandlers.Login;
 
 public static class LoginRequestHandler
 {
-    public static async Task<Results<EmptyHttpResult, UnauthorizedHttpResult, NotFound>> Handle(
+    public static async Task<Results<RedirectHttpResult, UnauthorizedHttpResult, NotFound>> Handle(
         [FromServices] ISignInManager signInManager,
         [FromForm] string username,
         [FromForm] string password,
@@ -23,7 +23,7 @@ public static class LoginRequestHandler
         {
             // ISignInManager produces response on successful login
             SignInResult.Success
-                => TypedResults.Empty,
+                => TypedResults.Redirect("/v1.0/auth/current"),
             _ => TypedResults.Unauthorized()
         };
     }

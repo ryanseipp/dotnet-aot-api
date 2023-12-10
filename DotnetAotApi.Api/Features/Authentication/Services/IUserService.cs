@@ -10,5 +10,5 @@ public interface IUserService
         CancellationToken ct = default
     );
 
-    Task<User?> GetUser(string email, CancellationToken ct = default);
+    Task<User?> GetUser(long id, CancellationToken ct = default);
 }

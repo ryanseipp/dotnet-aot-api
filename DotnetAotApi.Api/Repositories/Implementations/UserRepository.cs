@@ -74,6 +74,32 @@ public sealed class UserRepository : IUserRepository
         return reader.GetInt64(0);
     }
 
+    public async Task<User?> GetUserById(
+        long id,
+        NpgsqlTransaction? transaction = null,
+        CancellationToken ct = default
+    )
+    {
+        await EnsureConnectionOpen(ct);
+        await using var sqlCmd = new NpgsqlCommand(
+            """
+            SELECT id, username, status, password_hash, created_at, updated_at, deleted_at
+            FROM dotnet_aot_api.users
+            WHERE id = $1 LIMIT 1
+            """,
+            _dbConnection,
+            transaction
+        )
+        {
+            Parameters = { new() { Value = id } }
+        };
+
+        await sqlCmd.PrepareAsync(ct);
+        await using var reader = await sqlCmd.ExecuteReaderAsync(ct);
+
+        return await GetUserFromReader(reader);
+    }
+
     public async Task<User?> GetUserByUsername(
         string username,
         NpgsqlTransaction? transaction = null,

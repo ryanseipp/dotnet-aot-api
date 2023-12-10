@@ -19,6 +19,12 @@ public interface IUserRepository
         CancellationToken ct = default
     );
 
+    Task<User?> GetUserById(
+        long id,
+        NpgsqlTransaction? transaction = null,
+        CancellationToken ct = default
+    );
+
     Task<User?> GetUserByUsername(
         string username,
         NpgsqlTransaction? transaction = null,

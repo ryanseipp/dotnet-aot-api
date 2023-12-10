@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using DotnetAotApi.Api.Features.Authentication.RequestHandlers.GetCurrentUser;
 using DotnetAotApi.Api.Features.Authentication.RequestHandlers.Login;
 using DotnetAotApi.Api.Features.Authentication.RequestHandlers.Register;
 
@@ -19,9 +20,14 @@ public sealed class AuthenticationEndpoints : IEndpoint
             .MapPost("/login", LoginRequestHandler.Handle)
             .DisableAntiforgery()
             .WithName(AuthenticationRouteNames.LoginUser);
+
+        authV1Routes
+            .MapGet("/current", GetCurrentUserRequestHandler.Handle)
+            .WithName(AuthenticationRouteNames.GetCurrentUser);
     }
 }
 
 [JsonSerializable(typeof(LoginRequestModel))]
 [JsonSerializable(typeof(RegisterRequestModel))]
+[JsonSerializable(typeof(GetCurrentUserResponse))]
 internal partial class AuthenticationJsonSerializerContext : JsonSerializerContext { }

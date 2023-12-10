@@ -10,7 +10,7 @@ namespace DotnetAotApi.Api.Features.Authentication.RequestHandlers.Register;
 
 public static class RegisterRequestHandler
 {
-    public static async Task<Results<Created<long>, BadRequest, ValidationProblem>> Handle(
+    public static async Task<Results<RedirectHttpResult, BadRequest, ValidationProblem>> Handle(
         [FromServices] IValidator<RegisterRequestModel> validator,
         [FromServices] HaveIBeenPwnedClient haveIBeenPwned,
         [FromServices] IUserRepository userRepository,
@@ -65,6 +65,6 @@ public static class RegisterRequestHandler
         await transaction.CommitAsync();
         OtelConfig.RegisteredUsers.Add(1);
 
-        return TypedResults.Created("/user/{id}", user.Id);
+        return TypedResults.Redirect("/v1.0/auth/login");
     }
 }
