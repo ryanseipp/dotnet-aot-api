@@ -26,6 +26,13 @@ public sealed class UserRepository : IUserRepository
         CancellationToken ct = default
     )
     {
+        using var activity = OtelConfig
+            .Source
+            .StartActivityWithTags(
+                OtelNames.IsUniqueUser,
+                new() { new(OtelNames.UserId, user.Id) }
+            );
+
         await EnsureConnectionOpen(ct);
         await using var sqlCmd = new NpgsqlCommand(
             "SELECT 1 FROM dotnet_aot_api.users WHERE username = $1 LIMIT 1",
@@ -47,6 +54,10 @@ public sealed class UserRepository : IUserRepository
         CancellationToken ct = default
     )
     {
+        using var activity = OtelConfig
+            .Source
+            .StartActivityWithTags(OtelNames.CreateUser, new() { new(OtelNames.UserId, user.Id) });
+
         await EnsureConnectionOpen(ct);
         await using var sqlCmd = new NpgsqlCommand(
             """
@@ -80,6 +91,10 @@ public sealed class UserRepository : IUserRepository
         CancellationToken ct = default
     )
     {
+        using var activity = OtelConfig
+            .Source
+            .StartActivityWithTags(OtelNames.GetUserById, new() { new(OtelNames.UserId, id) });
+
         await EnsureConnectionOpen(ct);
         await using var sqlCmd = new NpgsqlCommand(
             """
@@ -106,6 +121,13 @@ public sealed class UserRepository : IUserRepository
         CancellationToken ct = default
     )
     {
+        using var activity = OtelConfig
+            .Source
+            .StartActivityWithTags(
+                OtelNames.GetUserByUsername,
+                new() { new(OtelNames.Username, username) }
+            );
+
         await EnsureConnectionOpen(ct);
         await using var sqlCmd = new NpgsqlCommand(
             """
@@ -132,6 +154,10 @@ public sealed class UserRepository : IUserRepository
         CancellationToken ct = default
     )
     {
+        using var activity = OtelConfig
+            .Source
+            .StartActivityWithTags(OtelNames.UpdateUser, new() { new(OtelNames.UserId, user.Id) });
+
         await EnsureConnectionOpen(ct);
         await using var sqlCmd = new NpgsqlCommand(
             """

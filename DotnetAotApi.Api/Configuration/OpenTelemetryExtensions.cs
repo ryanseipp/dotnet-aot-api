@@ -31,6 +31,7 @@ public static class OpenTelemetryExtensions
             .WithMetrics(builder =>
             {
                 builder
+                    .AddMeter(OtelConfig.ServiceName)
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddOtlpExporter(otlp =>
@@ -43,6 +44,7 @@ public static class OpenTelemetryExtensions
             .WithTracing(
                 builder =>
                     builder
+                        .AddSource(OtelConfig.ServiceName)
                         .AddAspNetCoreInstrumentation()
                         .AddHttpClientInstrumentation()
                         .AddNpgsql()

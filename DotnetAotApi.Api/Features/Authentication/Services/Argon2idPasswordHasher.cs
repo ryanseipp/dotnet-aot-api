@@ -39,6 +39,7 @@ public sealed class Argon2idPasswordHasher : IPasswordHasher
 
     private static HashResult ValidatePasswordInternal(string? hash, string password)
     {
+        using var activity = OtelConfig.Source.StartActivity("HashingPassword");
         SecureArray<byte>? decodedHash = null;
         try
         {

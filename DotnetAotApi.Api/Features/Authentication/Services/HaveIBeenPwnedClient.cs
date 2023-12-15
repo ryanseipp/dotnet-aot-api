@@ -14,7 +14,7 @@ public sealed class HaveIBeenPwnedClient
 
     public async Task<bool> PasswordIsPwned(string password, CancellationToken ct = default)
     {
-        using var activity = OtelConfig.Source.StartActivity("PasswordIsPwned");
+        using var activity = OtelConfig.Source.StartActivity(OtelNames.PwnedPasswordCheck);
         var sha1Hash = ComputeHash(password);
         var hashPrefix = sha1Hash.AsSpan().Slice(0, 5).ToString();
         var hashSuffix = sha1Hash.AsSpan().Slice(5).ToString();

@@ -44,6 +44,7 @@ public sealed class SignInManager : ISignInManager
         CancellationToken ct = default
     )
     {
+        using var activity = OtelConfig.Source.StartActivity(OtelNames.SigningInUser);
         var result = await _passwordHasher.ValidatePassword(user?.PasswordHash, password);
 
         if (user is null || result == HashResult.InvalidHash)
