@@ -15,7 +15,7 @@ builder
     .WithApplicationOptions()
     .WithValidation()
     .WithJsonConfiguration()
-    .WithOpenTelemetry(builder.Environment)
+    .WithOpenTelemetry()
     .WithHealthChecks(builder.Configuration)
     .WithDatabase(builder.Configuration)
     .WithAuthentication()

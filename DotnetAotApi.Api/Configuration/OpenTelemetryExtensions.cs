@@ -10,10 +10,7 @@ namespace DotnetAotApi.Api.Configuration;
 
 public static class OpenTelemetryExtensions
 {
-    public static IServiceCollection WithOpenTelemetry(
-        this IServiceCollection services,
-        IWebHostEnvironment environment
-    )
+    public static IServiceCollection WithOpenTelemetry(this IServiceCollection services)
     {
         services.AddOptions<OtlpExporterOptions>();
 
@@ -28,19 +25,19 @@ public static class OpenTelemetryExtensions
                         .AddDetector(new ContainerResourceDetector())
                         .AddDetector(new ProcessRuntimeDetector())
             )
-            .WithMetrics(builder =>
-            {
-                builder
-                    .AddMeter(OtelConfig.ServiceName)
-                    .AddAspNetCoreInstrumentation()
-                    .AddHttpClientInstrumentation()
-                    .AddOtlpExporter(otlp =>
-                    {
-                        otlp.ExportProcessorType = OpenTelemetry.ExportProcessorType.Batch;
-                        otlp.Endpoint = new Uri("http://localhost:4317");
-                        otlp.Protocol = OtlpExportProtocol.Grpc;
-                    });
-            })
+            .WithMetrics(
+                builder =>
+                    builder
+                        .AddMeter(OtelConfig.ServiceName)
+                        .AddAspNetCoreInstrumentation()
+                        .AddHttpClientInstrumentation()
+                        .AddOtlpExporter(otlp =>
+                        {
+                            otlp.ExportProcessorType = OpenTelemetry.ExportProcessorType.Batch;
+                            otlp.Endpoint = new Uri("http://localhost:4317");
+                            otlp.Protocol = OtlpExportProtocol.Grpc;
+                        })
+            )
             .WithTracing(
                 builder =>
                     builder
